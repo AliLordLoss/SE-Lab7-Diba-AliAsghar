@@ -1,8 +1,8 @@
 package semantic.symbol;
 
-import codeGenerator.Address;
+import codeGenerator.Address.DirectAddress;
+import codeGenerator.Address.ImidiateAddress;
 import codeGenerator.Memory;
-import codeGenerator.TypeAddress;
 import codeGenerator.varType;
 import errorHandler.ErrorHandler;
 
@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class SymbolTable {
     private Map<String, Klass> klasses;
-    private Map<String, Address> keyWords;
+    private Map<String, DirectAddress> keyWords;
     private Memory mem;
     private SymbolType lastType;
 
@@ -20,8 +20,8 @@ public class SymbolTable {
         mem = memory;
         klasses = new HashMap<>();
         keyWords = new HashMap<>();
-        keyWords.put("true", new Address(1, varType.Bool, TypeAddress.Imidiate));
-        keyWords.put("false", new Address(0, varType.Bool, TypeAddress.Imidiate));
+        keyWords.put("true", new ImidiateAddress(1, varType.Bool));
+        keyWords.put("false", new ImidiateAddress(0, varType.Bool));
     }
 
     public void setLastType(SymbolType type) {
@@ -65,7 +65,7 @@ public class SymbolTable {
         klasses.get(className).superClass = klasses.get(superClass);
     }
 
-    public Address get(String keywordName) {
+    public DirectAddress get(String keywordName) {
         return keyWords.get(keywordName);
     }
 
