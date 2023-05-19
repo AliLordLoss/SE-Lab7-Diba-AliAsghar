@@ -249,13 +249,16 @@ public class CodeGenerator {
         }
         DirectAddress temp = new DirectAddress(memory.getTemp(), t);
         ss.push(temp);
+        memoryAdd(temp, className, methodName);
+        //symbolStack.pop();
+    }
+
+    private void memoryAdd(DirectAddress temp, String className, String methodName) {
         memory.add3AddressCode(Operation.ASSIGN, new ImidiateAddress(temp.num, varType.Address),
                 new DirectAddress(symbolTable.getMethodReturnAddress(className, methodName), varType.Address), null);
         memory.add3AddressCode(Operation.ASSIGN, new ImidiateAddress(memory.getCurrentCodeBlockAddress() + 2, varType.Address),
                 new DirectAddress(symbolTable.getMethodCallerAddress(className, methodName), varType.Address), null);
         memory.add3AddressCode(Operation.JP, new DirectAddress(symbolTable.getMethodAddress(className, methodName), varType.Address), null, null);
-
-        //symbolStack.pop();
     }
 
     public void arg() {
