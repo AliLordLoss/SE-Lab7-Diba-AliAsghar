@@ -32,10 +32,10 @@ public class Rule {
             String[] RHSs = splited[1].split(" ");
             for (String s : RHSs) {
                 try {
-                    RHS.add(new GrammarSymbol(NonTerminal.valueOf(s)));
+                    RHS.add(new NonTerminalGrammarSymbol(NonTerminal.valueOf(s)));
                 } catch (Exception e) {
 //                    try{
-                    RHS.add(new GrammarSymbol(new Token(Token.getTyepFormString(s), s)));
+                    RHS.add(new TerminalGrammarSymbol(new Token(Token.getTyepFormString(s), s)));
 //                    }catch (IllegalArgumentException d){
 //                        d.printStackTrace();
 //                        Log.print(s);
@@ -50,18 +50,54 @@ public class Rule {
     public int semanticAction;
 }
 
-class GrammarSymbol {
-    public boolean isTerminal;
-    public NonTerminal nonTerminal;
-    public Token terminal;
+interface GrammarSymbol {
+//    public boolean isTerminal;
+//    public NonTerminal nonTerminal;
+//    public Token terminal;
 
-    public GrammarSymbol(NonTerminal nonTerminal) {
-        this.nonTerminal = nonTerminal;
-        isTerminal = false;
+//    public GrammarSymbol(NonTerminal nonTerminal) {
+//        this.nonTerminal = nonTerminal;
+//        isTerminal = false;
+//    }
+//
+//    public GrammarSymbol(Token terminal) {
+//        this.terminal = terminal;
+//        isTerminal = true;
+//    }
+
+    Boolean isTerminal();
+}
+
+class TerminalGrammarSymbol implements GrammarSymbol {
+    private final Token terminal;
+
+    TerminalGrammarSymbol(Token terminal) {
+        this.terminal = terminal;
     }
 
-    public GrammarSymbol(Token terminal) {
-        this.terminal = terminal;
-        isTerminal = true;
+    @Override
+    public Boolean isTerminal() {
+        return true;
+    }
+
+    public Token getTerminal() {
+        return terminal;
+    }
+}
+
+class NonTerminalGrammarSymbol implements GrammarSymbol {
+    private final NonTerminal nonTerminal;
+
+    NonTerminalGrammarSymbol(NonTerminal nonTerminal) {
+        this.nonTerminal = nonTerminal;
+    }
+
+    @Override
+    public Boolean isTerminal() {
+        return false;
+    }
+
+    public NonTerminal getNonTerminal() {
+        return nonTerminal;
     }
 }
