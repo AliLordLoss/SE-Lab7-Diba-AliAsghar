@@ -6,7 +6,6 @@ import codeGenerator.Memory;
 import codeGenerator.varType;
 import errorHandler.ErrorHandler;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,11 +40,16 @@ public class SymbolTable {
     }
 
     public void addMethod(String className, String methodName, int address) {
-        klasses.get(className).addMethod(methodName, new Method(address, lastType));
+        int returnAddress = mem.getDataAddress();
+        mem.increaseDataAddress();
+        int callerAddress = mem.getDataAddress();
+        mem.increaseDataAddress();
+        klasses.get(className).addMethod(methodName, new Method(address, lastType, returnAddress, callerAddress));
     }
 
     public void addMethodParameter(String className, String methodName, String parameterName) {
-        klasses.get(className).getMethod(methodName).addParameter(parameterName);
+        klasses.get(className).getMethod(methodName).addParameter(parameterName, lastType, mem.getDataAddress());
+        mem.increaseDataAddress();
     }
 
     public void addMethodLocalVariable(String className, String methodName, String localVariableName) {
@@ -92,16 +96,16 @@ public class SymbolTable {
     }
 
     public int getMethodCallerAddress(String className, String methodName) {
-        return klasses.get(className).getMethod(methodName).callerAddress;
+        return klasses.get(className).getMethod(methodName).getCallerAddress();
     }
 
     public int getMethodReturnAddress(String className, String methodName) {
-        return klasses.get(className).getMethod(methodName).returnAddress;
+        return klasses.get(className).getMethod(methodName).getReturnAddress();
     }
 
     public SymbolType getMethodReturnType(String className, String methodName) {
 //        try {
-        return klasses.get(className).getMethod(methodName).returnType;
+        return klasses.get(className).getMethod(methodName).getReturnType();
 //        }catch (NullPointerException ed){
 //            ed.printStackTrace();
 //            return null;
@@ -110,54 +114,54 @@ public class SymbolTable {
     }
 
     public int getMethodAddress(String className, String methodName) {
-        return klasses.get(className).getMethod(methodName).codeAddress;
+        return klasses.get(className).getMethod(methodName).getCodeAddress();
     }
 
 
 
 
-    class Method {
-        public int codeAddress;
-        public Map<String, Symbol> parameters;
-        public Map<String, Symbol> localVariable;
-        private ArrayList<String> orderdParameters;
-        public int callerAddress;
-        public int returnAddress;
-        public SymbolType returnType;
-        private int index;
-
-        public Method(int codeAddress, SymbolType returnType) {
-            this.codeAddress = codeAddress;
-            this.returnType = returnType;
-            this.orderdParameters = new ArrayList<>();
-            this.returnAddress = mem.getDataAddress();
-            mem.increaseDataAddress();
-            this.callerAddress = mem.getDataAddress();
-            mem.increaseDataAddress();
-            this.parameters = new HashMap<>();
-            this.localVariable = new HashMap<>();
-        }
-
-        public Symbol getVariable(String variableName) {
-            if (parameters.containsKey(variableName)) return parameters.get(variableName);
-            if (localVariable.containsKey(variableName)) return localVariable.get(variableName);
-            return new NullSymbol();
-        }
-
-        public void addParameter(String parameterName) {
-            parameters.put(parameterName, new Symbol(lastType, mem.getDataAddress()));
-            mem.increaseDataAddress();
-            orderdParameters.add(parameterName);
-        }
-
-        private void reset() {
-            index = 0;
-        }
-
-        private Symbol getNextParameter() {
-            return parameters.get(orderdParameters.get(index++));
-        }
-    }
+//    class Method {
+//        public int codeAddress;
+//        public Map<String, Symbol> parameters;
+//        public Map<String, Symbol> localVariable;
+//        private ArrayList<String> orderdParameters;
+//        public int callerAddress;
+//        public int returnAddress;
+//        public SymbolType returnType;
+//        private int index;
+//
+//        public Method(int codeAddress, SymbolType returnType) {
+//            this.codeAddress = codeAddress;
+//            this.returnType = returnType;
+//            this.orderdParameters = new ArrayList<>();
+//            this.returnAddress = mem.getDataAddress();
+//            mem.increaseDataAddress();
+//            this.callerAddress = mem.getDataAddress();
+//            mem.increaseDataAddress();
+//            this.parameters = new HashMap<>();
+//            this.localVariable = new HashMap<>();
+//        }
+//
+//        public Symbol getVariable(String variableName) {
+//            if (parameters.containsKey(variableName)) return parameters.get(variableName);
+//            if (localVariable.containsKey(variableName)) return localVariable.get(variableName);
+//            return new NullSymbol();
+//        }
+//
+//        public void addParameter(String parameterName) {
+//            parameters.put(parameterName, new Symbol(lastType, mem.getDataAddress()));
+//            mem.increaseDataAddress();
+//            orderdParameters.add(parameterName);
+//        }
+//
+//        private void reset() {
+//            index = 0;
+//        }
+//
+//        private Symbol getNextParameter() {
+//            return parameters.get(orderdParameters.get(index++));
+//        }
+//    }
 
 }
 

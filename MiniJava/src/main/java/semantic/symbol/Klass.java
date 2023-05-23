@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class Klass {
     private final Map<String, Symbol> fields;
-    private final Map<String, SymbolTable.Method> methods;
+    private final Map<String, Method> methods;
     private Klass superClass;
 
     public Klass() {
@@ -23,14 +23,14 @@ public class Klass {
         return this.methods.containsKey(name);
     }
 
-    public void addMethod(String name, SymbolTable.Method method) {
+    public void addMethod(String name, Method method) {
         if (this.methodExists(name)) {
             ErrorHandler.printError("This method already defined");
         }
         this.methods.put(name, method);
     }
 
-    public SymbolTable.Method getMethod(String name) {
+    public Method getMethod(String name) {
         return this.methods.get(name);
     }
 
@@ -47,9 +47,6 @@ public class Klass {
     }
 
     public void addMethodLocalVariable(String methodName, String localVariableName, Symbol symbol) {
-        if (this.getMethod(methodName).localVariable.containsKey(localVariableName)) {
-            ErrorHandler.printError("This variable already defined");
-        }
-        this.getMethod(methodName).localVariable.put(localVariableName, symbol);
+        this.getMethod(methodName).addLocalVariable(localVariableName, symbol);
     }
 }
