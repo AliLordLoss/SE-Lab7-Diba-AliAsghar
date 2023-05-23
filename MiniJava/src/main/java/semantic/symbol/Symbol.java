@@ -8,8 +8,16 @@ public class Symbol {
     public SymbolType type;
     public int address;
 
+    public Symbol() {
+
+    }
+
     public Symbol(SymbolType type, int address) {
         this.type = type;
         this.address = address;
+    }
+
+    public Boolean isNull() {
+        return false;
     }
 }
